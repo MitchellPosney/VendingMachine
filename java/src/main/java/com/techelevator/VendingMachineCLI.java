@@ -30,9 +30,11 @@ public class VendingMachineCLI
 
 			if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS))
 			{
-
+				VendingMachine obj = new VendingMachine();
+				obj.printVendingContents();
 				// display vending machine items
-			} else if (choice.equals(MAIN_MENU_OPTION_PURCHASE))
+			}
+			else if (choice.equals(MAIN_MENU_OPTION_PURCHASE))
 			{
 				// do purchase
 			}
@@ -57,20 +59,19 @@ public class VendingMachineCLI
 	/*
 	This method will parse the inventory file and create all necessary Objects out of the VendingItem class.
 	 */
-	private static void parseInventory() {
+	private static void parseInventory()
+	{
 		File inventory = new File("Inventory.txt");
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(inventory));
-			String invLocation;
-			String invItemName;
-			double invPrice;
+
 			String line = reader.readLine();
 			while (line != null) {
 				//System.out.println(line);
 				String[] invSegments = line.split("\\|");
-				invLocation = invSegments[0];
-				invItemName = invSegments[1];
-				invPrice = Double.parseDouble(invSegments[2]);
+				String invLocation = invSegments[0];
+				String invItemName = invSegments[1];
+				double invPrice = Double.parseDouble(invSegments[2]);
 
 				line = reader.readLine();
 			}
@@ -78,8 +79,5 @@ public class VendingMachineCLI
 		} catch (IOException e) {
 			System.out.println("There was an error " + e.toString());
 		}
-
-
-
 	}
 }
