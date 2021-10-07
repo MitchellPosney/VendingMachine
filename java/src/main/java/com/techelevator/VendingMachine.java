@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class VendingMachine
 {
-    public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
+    public LinkedHashMap<String,VendingItem> inventory = new LinkedHashMap<String, VendingItem>();
 
     public Double userBalance = 5.30;
 
@@ -25,9 +25,7 @@ public class VendingMachine
             while (line != null)
             {
                 String[] invSegments = line.split("\\|");
-                inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
-
-
+                inventory.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
                 line = reader.readLine();
             }
         } catch (IOException e)
@@ -39,15 +37,22 @@ public class VendingMachine
     {
 
         String input = "A1";
-        if(inventor.containsKey(input))
+        if(inventory.containsKey(input))
         {
-            if(userBalance - inventor.get(input).getPrice().doubleValue() >= 0)
+            if(userBalance - inventory.get(input).getPrice().doubleValue() >= 0)
             {
-                userBalance = userBalance - inventor.get(input).getPrice().doubleValue();
-                System.out.println("You choose " + inventor.get(input).getItemName());
+                userBalance = userBalance - inventory.get(input).getPrice().doubleValue();
+                System.out.println("You choose " + inventory.get(input).getItemName());
                 System.out.println("Your change is " + userBalance);
             }
-
+            else
+            {
+                System.out.println("Not Enough Money");
+            }
+        }
+        else
+        {
+            System.out.println("Not A Valid Location");
         }
     }
 
@@ -57,9 +62,9 @@ public class VendingMachine
     public void printVendingContents()
     {
 
-        char previousId = inventor.get("A1").getLocationId().charAt(0);
+        char previousId = inventory.get("A1").getLocationId().charAt(0);
         int longestItemLength = 0;
-        for(Map.Entry<String, VendingItem> item : inventor.entrySet())
+        for(Map.Entry<String, VendingItem> item : inventory.entrySet())
         {
             if(item.getValue().getItemName().length() > longestItemLength)
             {
@@ -67,16 +72,16 @@ public class VendingMachine
             }
         }
 
-        for(Map.Entry<String, VendingItem> item : inventor.entrySet())
+        for(Map.Entry<String, VendingItem> item : inventory.entrySet())
         {
             String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
             if(item.getValue().getLocationId().charAt(0) == previousId)
             {
-                System.out.print("|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  +"  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
             }
             else
             {
-                System.out.print("\n|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  +"  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("\n|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
             }
             previousId = item.getValue().getLocationId().charAt(0);
         }

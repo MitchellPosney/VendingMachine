@@ -2,11 +2,6 @@ package com.techelevator;
 
 import com.techelevator.view.Menu;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-
 public class VendingMachineCLI
 {
 
@@ -49,8 +44,6 @@ public class VendingMachineCLI
 	{
 		Menu menu = new Menu(System.in, System.out);
 		VendingMachineCLI cli = new VendingMachineCLI(menu);
-		new VendingMachine().printVendingContents();
-
 		cli.run();
 
 	}
