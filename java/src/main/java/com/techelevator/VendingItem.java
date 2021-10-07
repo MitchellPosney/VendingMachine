@@ -1,37 +1,36 @@
 package com.techelevator;
 
-public class VendingItem {
-    private String location;
-    private String itemName;
-    private double price;
+import java.math.BigDecimal;
 
-    public VendingItem (String location, String itemName, double price) {
-        this.location = location;
+public class VendingItem
+{
+    private String locationId;
+    private String itemName;
+    private BigDecimal price;
+    private int inStockAmount;
+
+    public VendingItem (String locationId, String itemName, BigDecimal price)
+    {
+        this.locationId = locationId;
         this.itemName = itemName;
         this.price = price;
+        this.inStockAmount = 5;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
+    public String getLocationId() {
+        return locationId;
     }
 
     public String getItemName() {
         return itemName;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
-        this.price = price;
+    public int getInStockAmount() {
+        return inStockAmount;
     }
+
 }

@@ -5,43 +5,52 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class VendingMachine
 {
+    public ArrayList<VendingItem> inventory = new ArrayList<VendingItem>();
+
+
+    public void parseInventory()
+    {
+        File inventoryTemp = new File("vendingmachine.csv");;
+
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
+            String invLocation;
+            String invItemName;
+            BigDecimal invPrice;
+            String line = reader.readLine();
+            while (line != null)
+            {
+                String[] invSegments = line.split("\\|");
+                invLocation = invSegments[0];
+                invItemName = invSegments[1];
+                invPrice = new BigDecimal(invSegments[2]);
+
+                VendingItem object = new VendingItem(invLocation,invItemName,invPrice);
+                inventory.add(object);
+                line = reader.readLine();
+            }
+        } catch (IOException e)
+        {
+            System.out.println("There was an error " + e.toString());
+        }
+        System.out.println("BreakLine");
+    }
+
 
     public void printVendingContents()
     {
-        File inventory = new File("vendingmachine.csv");
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(inventory));
-            String previousInvLocation = null;
-            String line = reader.readLine();
-            while (line != null) {
-                String[] invSegments = line.split("(\\|)");
-                String invLocation = invSegments[0];
-                String invItemName = (invSegments[1].length() < 20) ?  invSegments[1] += (" ").repeat(20 - invSegments[1].length()) : invSegments[1];
-                BigDecimal invPrice = new BigDecimal(invSegments[2]);
-                line = reader.readLine();
+        String previousId = inventory.get(0).getLocationId();
+        for(VendingItem item: inventory)
+        {
 
-                if(previousInvLocation == null)
-                {
-                    previousInvLocation = invSegments[0];
-                }
-                if(previousInvLocation.charAt(0) == invLocation.charAt(0))
-                {
-                    System.out.print("| " + invLocation + " " + invItemName + " " + invPrice);
-                    previousInvLocation = invSegments[0];
-                }
-                else
-                {
-                    System.out.print("\n" + "| " + invLocation + " " +invItemName + " " + invPrice);
-                    previousInvLocation = invSegments[0];
-                }
-            }
-        } catch (IOException e) {
-            System.out.println("There was an error " + e.toString());
         }
-    }
 
+    }
 }
