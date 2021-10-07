@@ -11,7 +11,7 @@ public class VendingMachine
 {
     public ArrayList<VendingItem> inventory = new ArrayList<VendingItem>();
 
-    public void parseInventory()
+    public VendingMachine()
     {
         File inventoryTemp = new File("vendingmachine.csv");
         try
@@ -28,7 +28,6 @@ public class VendingMachine
         {
         }
         System.out.println("BreakLine");
-        printVendingContents();
     }
 
 

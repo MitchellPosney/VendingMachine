@@ -49,7 +49,7 @@ public class VendingMachineCLI
 	{
 		Menu menu = new Menu(System.in, System.out);
 		VendingMachineCLI cli = new VendingMachineCLI(menu);
-		new VendingMachine().parseInventory();
+		new VendingMachine().printVendingContents();
 
 		cli.run();
 
