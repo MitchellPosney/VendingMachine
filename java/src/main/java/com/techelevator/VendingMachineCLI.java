@@ -2,6 +2,11 @@ package com.techelevator;
 
 import com.techelevator.view.Menu;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class VendingMachineCLI
 {
 
@@ -43,6 +48,38 @@ public class VendingMachineCLI
 	{
 		Menu menu = new Menu(System.in, System.out);
 		VendingMachineCLI cli = new VendingMachineCLI(menu);
+		parseInventory();
 		cli.run();
+
+	}
+
+
+	/*
+	This method will parse the inventory file and create all necessary Objects out of the VendingItem class.
+	 */
+	private static void parseInventory() {
+		File inventory = new File("Inventory.txt");
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(inventory));
+			String invLocation;
+			String invItemName;
+			double invPrice;
+			String line = reader.readLine();
+			while (line != null) {
+				//System.out.println(line);
+				String[] invSegments = line.split("\\|");
+				invLocation = invSegments[0];
+				invItemName = invSegments[1];
+				invPrice = Double.parseDouble(invSegments[2]);
+
+				line = reader.readLine();
+			}
+
+		} catch (IOException e) {
+			System.out.println("There was an error " + e.toString());
+		}
+
+
+
 	}
 }
