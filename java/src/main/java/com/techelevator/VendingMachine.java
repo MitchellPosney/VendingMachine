@@ -6,50 +6,56 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
-
 
 public class VendingMachine
 {
     public ArrayList<VendingItem> inventory = new ArrayList<VendingItem>();
 
-
     public void parseInventory()
     {
-        File inventoryTemp = new File("vendingmachine.csv");;
-
+        File inventoryTemp = new File("vendingmachine.csv");
         try
         {
             BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
-            String invLocation;
-            String invItemName;
-            BigDecimal invPrice;
             String line = reader.readLine();
             while (line != null)
             {
                 String[] invSegments = line.split("\\|");
-                invLocation = invSegments[0];
-                invItemName = invSegments[1];
-                invPrice = new BigDecimal(invSegments[2]);
-
-                VendingItem object = new VendingItem(invLocation,invItemName,invPrice);
-                inventory.add(object);
+                inventory.add(new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
                 line = reader.readLine();
             }
         } catch (IOException e)
         {
-            System.out.println("There was an error " + e.toString());
         }
         System.out.println("BreakLine");
+        printVendingContents();
     }
 
 
     public void printVendingContents()
     {
-        String previousId = inventory.get(0).getLocationId();
-        for(VendingItem item: inventory)
+        char previousId = inventory.get(0).getLocationId().charAt(0);
+        int longestItemlength = 0;
+        for(VendingItem item : inventory)
         {
+            if(item.getItemName().length() > longestItemlength)
+            {
+                longestItemlength = item.getItemName().length();
+            }
+        }
 
+        for(VendingItem item : inventory)
+        {
+            String itemName = item.getItemName() + (" ").repeat(longestItemlength - item.getItemName().length());
+            if(item.getLocationId().charAt(0) == previousId)
+            {
+                System.out.print("|"+ item.getLocationId() + " " + itemName + " $" + item.getPrice()  +"  InStock: " + item.getInStockAmount() + " " );
+            }
+            else
+            {
+                System.out.print("\n|"+ item.getLocationId() + " " + itemName + " $" + item.getPrice()  +"  InStock: " + item.getInStockAmount() + " " );
+            }
+            previousId = item.getLocationId().charAt(0);
         }
 
     }
