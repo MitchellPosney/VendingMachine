@@ -5,11 +5,15 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class VendingMachine
 {
-    public ArrayList<VendingItem> inventory = new ArrayList<VendingItem>();
+    public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
+
+    public Double userBalance = 5.30;
+
 
     public VendingMachine()
     {
@@ -21,41 +25,68 @@ public class VendingMachine
             while (line != null)
             {
                 String[] invSegments = line.split("\\|");
-                inventory.add(new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
+                inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
+
+
                 line = reader.readLine();
             }
         } catch (IOException e)
         {
         }
-        System.out.println("BreakLine");
     }
+
+    public void purchase()
+    {
+
+        String input = "A1";
+        if(inventor.containsKey(input))
+        {
+            if(userBalance - inventor.get(input).getPrice().doubleValue() >= 0)
+            {
+                userBalance = userBalance - inventor.get(input).getPrice().doubleValue();
+                System.out.println("You choose " + inventor.get(input).getItemName());
+                System.out.println("Your change is " + userBalance);
+            }
+
+        }
+    }
+
+
 
 
     public void printVendingContents()
     {
-        char previousId = inventory.get(0).getLocationId().charAt(0);
-        int longestItemlength = 0;
-        for(VendingItem item : inventory)
+
+        char previousId = inventor.get("A1").getLocationId().charAt(0);
+        int longestItemLength = 0;
+        for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
-            if(item.getItemName().length() > longestItemlength)
+            if(item.getValue().getItemName().length() > longestItemLength)
             {
-                longestItemlength = item.getItemName().length();
+                longestItemLength = item.getValue().getItemName().length();
             }
         }
 
-        for(VendingItem item : inventory)
+        for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
-            String itemName = item.getItemName() + (" ").repeat(longestItemlength - item.getItemName().length());
-            if(item.getLocationId().charAt(0) == previousId)
+            String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
+            if(item.getValue().getLocationId().charAt(0) == previousId)
             {
-                System.out.print("|"+ item.getLocationId() + " " + itemName + " $" + item.getPrice()  +"  InStock: " + item.getInStockAmount() + " " );
+                System.out.print("|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  +"  InStock: " + item.getValue().getInStockAmount() + " " );
             }
             else
             {
-                System.out.print("\n|"+ item.getLocationId() + " " + itemName + " $" + item.getPrice()  +"  InStock: " + item.getInStockAmount() + " " );
+                System.out.print("\n|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  +"  InStock: " + item.getValue().getInStockAmount() + " " );
             }
-            previousId = item.getLocationId().charAt(0);
+            previousId = item.getValue().getLocationId().charAt(0);
         }
 
     }
+
+
+
+
+
+
+
 }
