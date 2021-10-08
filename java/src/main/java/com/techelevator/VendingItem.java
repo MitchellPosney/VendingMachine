@@ -33,4 +33,7 @@ public class VendingItem
         return inStockAmount;
     }
 
+    public void itemIsPurchased() {
+        inStockAmount--;
+    }
 }

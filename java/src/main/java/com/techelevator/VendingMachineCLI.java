@@ -12,37 +12,6 @@ public class VendingMachineCLI
 
 	private Menu menu;
 
-	public VendingMachineCLI(Menu menu)
-	{
-		this.menu = menu;
-	}
-
-	public void run()
-	{
-		VendingMachine customer = new VendingMachine();
-		while (true)
-		{
-			String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
-
-			if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS))
-			{
-				customer.printVendingContents();
-				// display vending machine items
-			}
-			else if (choice.equals(MAIN_MENU_OPTION_PURCHASE))
-			{
-				customer.getCustomerMoney();
-				customer.purchaseProcess();
-				// do purchase
-			}
-			else if(choice.equals(MAIN_MENU_OPTION_EXIT))
-			{
-				// do exit
-			}
-
-		}
-	}
-
 	public static void main(String[] args)
 	{
 		Menu menu = new Menu(System.in, System.out);
@@ -50,5 +19,37 @@ public class VendingMachineCLI
 		cli.run();
 
 	}
+
+	public VendingMachineCLI(Menu menu)
+	{
+		this.menu = menu;
+	}
+
+	public void run()
+	{
+		VendingMachine vendingMachine = new VendingMachine();
+		while (true)
+		{
+			String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
+
+			if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS))
+			{
+				vendingMachine.printVendingContents();
+				// display vending machine items
+			}
+			else if (choice.equals(MAIN_MENU_OPTION_PURCHASE))
+			{
+				vendingMachine.getCustomerMoney();
+				vendingMachine.purchaseProcess();
+				// do purchase
+			}
+			else if(choice.equals(MAIN_MENU_OPTION_EXIT))
+			{
+				// do exit
+			}
+		}
+	}
+
+
 
 }

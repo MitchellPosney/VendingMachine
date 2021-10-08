@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -18,49 +19,37 @@ public class VendingMachine
 
     public VendingMachine()
     {
-        File inventoryTemp = new File("vendingmachine.csv");
-        try
-        {
-            BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
-            String line = reader.readLine();
-            while (line != null)
+            // Gets stock of items from Inventory File
+            File inventoryTemp = new File("vendingmachine.csv");
+            try
             {
-                String[] invSegments = line.split("\\|");
-                inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
-                line = reader.readLine();
-            }
-        } catch (IOException e)
-        {
+                BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
+                String line = reader.readLine();
+                while (line != null)
+                {
+                    String[] invSegments = line.split("\\|");
+                    inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
+                    line = reader.readLine();
+                }
+            } catch (IOException e)
+            {
         }
     }
 
-    public BigDecimal getCustomerMoney()
+    public void getCustomerMoney()
     {
         boolean validResponse = false;
-        BigDecimal customerMoney =  new BigDecimal(0);
-
-        while (validResponse == false) {
+        while (!validResponse) {
             System.out.print("Please enter your money: ");
             String moneyInputString = scanner.nextLine();
             if (isNumeric(moneyInputString)) {
-                customerMoney = new BigDecimal(moneyInputString);
-                return customerMoney;
+                userBalance = new BigDecimal(moneyInputString);
+                userBalance.setScale(2, RoundingMode.HALF_UP);
+                break;
             }
         }
-        System.out.println("$" + customerMoney + ", Great!\nLet's get some snacks!");
-        return customerMoney;
+        System.out.println("$" + userBalance + ", Great!\nLet's get some snacks!");
     }
-
-    public boolean isNumeric(String moneyInput) {
-        try
-        {
-            if(moneyInput == null || moneyInput.equals("") || moneyInput.equals("0")) {
-                return false;
-            }
-        } catch (NumberFormatException e) {}
-        return true;
-    }
-
 
     public void purchaseProcess()
     {
@@ -70,11 +59,20 @@ public class VendingMachine
         {
             if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue()  > 0.00)
             {
-                double temp = userBalance.doubleValue();
-                double temp2 = inventor.get(userInput).getPrice().doubleValue();
-                userBalance = new BigDecimal(temp - temp2);
-                System.out.println("You choose " + inventor.get(userInput).getItemName());
-                System.out.println("Your change is " + userBalance);
+                if(inventor.get(userInput).getInStockAmount() >= 0) {
+
+
+
+                    BigDecimal itemPrice = inventor.get(userInput).getPrice();
+                    userBalance = userBalance.subtract(itemPrice);
+
+
+                    inventor.get(userInput).itemIsPurchased();
+                    System.out.println("You choose " + inventor.get(userInput).getItemName());
+                    System.out.println("Your change is $" + userBalance);
+                } else {
+                    System.out.println("Item is SOLD OUT!");
+                }
             }
             else
             {
@@ -87,12 +85,21 @@ public class VendingMachine
         }
     }
 
-
-
+    public boolean isNumeric(String moneyInput) {
+        int intValue;
+        if(moneyInput == null || moneyInput.equals("") || moneyInput.equals("0")) {
+            return false;
+        }
+        try {
+            intValue = Integer.parseInt(moneyInput);
+            return true;
+        } catch (NumberFormatException e) {}
+        System.out.println(moneyInput + " is not a proper value.");
+        return false;
+    }
 
     public void printVendingContents()
     {
-
         char previousId = inventor.get("A1").getLocationId().charAt(0);
         int longestItemLength = 0;
         for(Map.Entry<String, VendingItem> item : inventor.entrySet())
