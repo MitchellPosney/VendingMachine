@@ -15,13 +15,12 @@ public class VendingMachine
     private Scanner scanner = new Scanner(System.in);
     public BigDecimal userBalance;
 
-
     public VendingMachine()
     {
             // Gets stock of items from Inventory File
-            File inventoryTemp = new File("vendingmachine.csv");
             try
             {
+                File inventoryTemp = new File("vendingmachine.csv");
                 BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
                 String line = reader.readLine();
                 while (line != null)
@@ -32,8 +31,40 @@ public class VendingMachine
                 }
             } catch (IOException e)
             {
-        }
+                System.out.println("Vending Machine File Could Not Be Found Shutting Down...");
+                System.exit(0);
+            }
+
     }
+
+    public void purchaseMenu()
+    {
+        boolean isTransactionFinished = false;
+        do
+        {
+            System.out.println("(1)Feed Money\n(2) Select Product\n(3) Finish Transaction");
+            String choice = scanner.nextLine();
+            switch (choice)
+            {
+                case "1":
+                    getCustomerMoney();
+                case "2":
+                    itemSelectionProccess();
+                case "3":
+                    isTransactionFinished = true;
+
+
+
+
+                    System.out.println("Thank for using the Home Alone Snack Machine");
+                default:
+                {
+                    System.out.println("Invalid Entry");
+                }
+            }
+        }while(isTransactionFinished == false);
+    }
+
 
     public void getCustomerMoney()
     {
@@ -42,7 +73,7 @@ public class VendingMachine
             System.out.print("Please enter your money: ");
             String moneyInputString = scanner.nextLine();
             if (isNumeric(moneyInputString)) {
-                userBalance = new BigDecimal(moneyInputString);
+                userBalance = userBalance.add(new BigDecimal(moneyInputString));
                 userBalance.setScale(2, RoundingMode.HALF_UP);
                 break;
             }
@@ -50,7 +81,7 @@ public class VendingMachine
         System.out.println("$" + userBalance + ", Great!\nLet's get some snacks!");
     }
 
-    public void purchaseProcess()
+    public void itemSelectionProccess()
     {
         System.out.println("Which item do you want");
         String userInput = scanner.nextLine();
@@ -65,9 +96,11 @@ public class VendingMachine
                     userBalance = userBalance.subtract(itemPrice);
                     inventor.get(userInput).itemIsPurchased();
                     System.out.println("You choose " + inventor.get(userInput).getItemName());
-                    System.out.println("Your change is $" + userBalance);
+                    System.out.println(getSound(inventor.get(userInput).getItemType()));
+                    System.out.println("Your New Balance is $" + userBalance);
                     logSale(startingBal);
-                } else
+                }
+                else
                 {
                     System.out.println("Item is SOLD OUT!");
                 }
@@ -83,6 +116,23 @@ public class VendingMachine
         }
     }
 
+    public String getSound(String itemType)
+    {
+        switch (itemType)
+        {
+            case "Chip":
+                return "Crunch Crunch, Yum!";
+            case "Candy":
+                return "Munch Munch, Yum!";
+            case "Drink":
+                return "Glug Glug, Yum!";
+            case "Gum":
+                return "Chew Chew, Yum!";
+            default:
+                return "THIS SNACK IS KINDA SUS";
+        }
+    }
+
     public void logSale(BigDecimal startBalance)
     {
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -93,9 +143,7 @@ public class VendingMachine
             newPrint.write("\n" + timeFormat.format(presentTime) + " " + startBalance  + " " + userBalance);
 
             newPrint.close();
-        } catch (IOException e)
-        {
-        }
+        } catch (IOException e) {}
     }
 
     public boolean isNumeric(String moneyInput) {
@@ -104,8 +152,10 @@ public class VendingMachine
             {
                 return true;
             }
-        } catch (NumberFormatException e) {}
-        System.out.println(moneyInput + " is not a proper value.");
+        } catch (NumberFormatException e)
+        {
+            System.out.println(moneyInput + " is not a proper value.");
+        }
         return false;
     }
 
@@ -132,7 +182,7 @@ public class VendingMachine
             String itemType = item.getValue().getItemType() + (" ").repeat(longestItemTypeLength - item.getValue().getItemType().length());
             if(item.getValue().getLocationId().charAt(0) == previousId)
             {
-                System.out.print("|"+ item.getValue().getLocationId() + " " + itemName + " " + itemType + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("|"+ item.getKey() + " " + itemName + " " + itemType + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
             }
             else
             {
