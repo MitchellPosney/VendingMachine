@@ -54,13 +54,13 @@ process menu:~~
           - ~~All gum items print "Chew Chew, Yum!"~~
         - ~~After the product is dispensed, the machine must update its balance
         accordingly and return the customer to the Purchase menu.~~
-    3. Selecting "(3) Finish Transaction" allows the customer to complete the
-    transaction and receive any remaining change.
-        - The customer's money is returned using nickels, dimes, and quarters
-        (using the smallest amount of coins possible).
-        - The machine's current balance must be updated to $0 remaining.
-    4. After completing their purchase, the user is returned to the "Main" menu to
-    continue using the vending machine.
+    3. ~~Selecting "(3) Finish Transaction" allows the customer to complete the
+    transaction and receive any remaining change.~~
+        - ~~The customer's money is returned using nickels, dimes, and quarters
+        (using the smallest amount of coins possible).~~
+        - ~~The machine's current balance must be updated to $0 remaining.~~
+    4. ~~After completing their purchase, the user is returned to the "Main" menu to
+    continue using the vending machine.~~
 8. All purchases must be audited to prevent theft from the vending machine:
    - Each purchase must generate a line in a file called `Log.txt`.
    - The audit entry must be in the format:

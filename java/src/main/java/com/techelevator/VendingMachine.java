@@ -67,7 +67,7 @@ public class VendingMachine
             {
                 if(inventor.get(userInput).getInStockAmount() != 0)
                 {
-                    BigDecimal startingBal = inventor.get(userInput).getPrice();
+                    BigDecimal startingBal = userBalance;
                     BigDecimal itemPrice = inventor.get(userInput).getPrice();
                     userBalance = userBalance.subtract(itemPrice);
                     inventor.get(userInput).itemIsPurchased();
