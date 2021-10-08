@@ -1,9 +1,6 @@
 package com.techelevator;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.LinkedHashMap;
@@ -28,7 +25,7 @@ public class VendingMachine
                 while (line != null)
                 {
                     String[] invSegments = line.split("\\|");
-                    inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
+                    inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2]),invSegments[3]));
                     line = reader.readLine();
                 }
             } catch (IOException e)
@@ -60,16 +57,13 @@ public class VendingMachine
             if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue()  > 0.00)
             {
                 if(inventor.get(userInput).getInStockAmount() >= 0) {
-
-
-
+                    BigDecimal startingBal = inventor.get(userInput).getPrice();
                     BigDecimal itemPrice = inventor.get(userInput).getPrice();
                     userBalance = userBalance.subtract(itemPrice);
-
-
                     inventor.get(userInput).itemIsPurchased();
                     System.out.println("You choose " + inventor.get(userInput).getItemName());
                     System.out.println("Your change is $" + userBalance);
+                    logSale(startingBal);
                 } else {
                     System.out.println("Item is SOLD OUT!");
                 }
@@ -85,14 +79,27 @@ public class VendingMachine
         }
     }
 
-    public boolean isNumeric(String moneyInput) {
-        int intValue;
-        if(moneyInput == null || moneyInput.equals("") || moneyInput.equals("0")) {
-            return false;
-        }
+    public void logSale(BigDecimal startBalance)
+    {
         try {
-            intValue = Integer.parseInt(moneyInput);
-            return true;
+
+            FileWriter newPrint = new FileWriter("Log.txt", true);
+            newPrint.write("\n"+java.time.LocalDateTime.now() + " " + startBalance  + " " + userBalance);
+
+            newPrint.close();
+        } catch (IOException e)
+        {
+        }
+
+
+    }
+
+    public boolean isNumeric(String moneyInput) {
+        try {
+            if(Integer.parseInt(moneyInput) > 0)
+            {
+                return true;
+            }
         } catch (NumberFormatException e) {}
         System.out.println(moneyInput + " is not a proper value.");
         return false;
@@ -102,34 +109,33 @@ public class VendingMachine
     {
         char previousId = inventor.get("A1").getLocationId().charAt(0);
         int longestItemLength = 0;
+        int longestItemTypeLength = 0;
         for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
             if(item.getValue().getItemName().length() > longestItemLength)
             {
                 longestItemLength = item.getValue().getItemName().length();
             }
+            if(item.getValue().getItemType().length() > longestItemTypeLength)
+            {
+                longestItemTypeLength = item.getValue().getItemType().length();
+            }
         }
 
         for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
             String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
+            String itemType = item.getValue().getItemType() + (" ").repeat(longestItemTypeLength - item.getValue().getItemType().length());
             if(item.getValue().getLocationId().charAt(0) == previousId)
             {
-                System.out.print("|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("|"+ item.getValue().getLocationId() + " " + itemName + " " + itemType + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
             }
             else
             {
-                System.out.print("\n|"+ item.getValue().getLocationId() + " " + itemName + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("\n|"+ item.getValue().getLocationId() + " " + itemName  + " " + itemType  + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
             }
             previousId = item.getValue().getLocationId().charAt(0);
         }
 
     }
-
-
-
-
-
-
-
 }

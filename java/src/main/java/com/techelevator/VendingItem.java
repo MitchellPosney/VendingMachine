@@ -8,13 +8,15 @@ public class VendingItem
     private String itemName;
     private BigDecimal price;
     private int inStockAmount;
+    private String itemType;
 
-    public VendingItem (String locationId, String itemName, BigDecimal price)
+    public VendingItem (String locationId, String itemName, BigDecimal price, String itemType)
     {
         this.locationId = locationId;
         this.itemName = itemName;
         this.price = price;
         this.inStockAmount = 5;
+        this.itemType = itemType;
     }
 
     public String getLocationId() {
@@ -35,5 +37,10 @@ public class VendingItem
 
     public void itemIsPurchased() {
         inStockAmount--;
+    }
+
+    public String getItemType()
+    {
+        return itemType;
     }
 }
