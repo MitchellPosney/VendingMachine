@@ -3,6 +3,8 @@ package com.techelevator;
 import java.io.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -56,7 +58,8 @@ public class VendingMachine
         {
             if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue()  > 0.00)
             {
-                if(inventor.get(userInput).getInStockAmount() >= 0) {
+                if(inventor.get(userInput).getInStockAmount() >= 0)
+                {
                     BigDecimal startingBal = inventor.get(userInput).getPrice();
                     BigDecimal itemPrice = inventor.get(userInput).getPrice();
                     userBalance = userBalance.subtract(itemPrice);
@@ -64,7 +67,8 @@ public class VendingMachine
                     System.out.println("You choose " + inventor.get(userInput).getItemName());
                     System.out.println("Your change is $" + userBalance);
                     logSale(startingBal);
-                } else {
+                } else
+                {
                     System.out.println("Item is SOLD OUT!");
                 }
             }
@@ -81,17 +85,17 @@ public class VendingMachine
 
     public void logSale(BigDecimal startBalance)
     {
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        LocalDateTime presentTime = LocalDateTime.now();
         try {
 
             FileWriter newPrint = new FileWriter("Log.txt", true);
-            newPrint.write("\n"+java.time.LocalDateTime.now() + " " + startBalance  + " " + userBalance);
+            newPrint.write("\n" + timeFormat.format(presentTime) + " " + startBalance  + " " + userBalance);
 
             newPrint.close();
         } catch (IOException e)
         {
         }
-
-
     }
 
     public boolean isNumeric(String moneyInput) {
