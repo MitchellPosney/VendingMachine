@@ -18,63 +18,24 @@ public class VendingMachine
 
     public VendingMachine()
     {
-            // Gets stock of items from Inventory File
-            try
-            {
-                File inventoryTemp = new File("vendingmachine.csv");
-                BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
-                String line = reader.readLine();
-                while (line != null)
-                {
-                    String[] invSegments = line.split("\\|");
-                    inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2]),invSegments[3]));
-                    line = reader.readLine();
-                }
-            } catch (IOException e)
-            {
-                System.out.println("Vending Machine File Could Not Be Found Shutting Down...");
-                System.exit(0);
-            }
-
-    }
-
-    public void purchaseMenu()
-    {
-        boolean isTransactionFinished = false;
-        do
+        // Gets stock of items from Inventory File
+        try
         {
-            System.out.println("\n(1) Feed Money\n(2) Select Product\n(3) Display Items\n(4) Finish Transaction\n\nRemaining Balance: $" + userBalance);
-            System.out.print("Please enter an option >>> ");
-            String choice = scanner.nextLine();
-
-            switch (choice)
+            File inventoryTemp = new File("vendingmachine.csv");
+            BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
+            String line = reader.readLine();
+            while (line != null)
             {
-                case "1":
-                    getCustomerMoney();
-                    break;
-                case "2":
-                    itemSelectionProccess();
-                    break;
-                case "3":
-                    printVendingContents();
-                    break;
-
-
-                case "4":
-                    isTransactionFinished = true;
-
-                    System.out.println("Thank for using the Home Alone Snack Machine");
-                    break;
-
-
-                default:
-                {
-                    System.out.println("Invalid Entry");
-                }
+                String[] invSegments = line.split("\\|");
+                inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2]),invSegments[3]));
+                line = reader.readLine();
             }
-        }while(isTransactionFinished == false);
+        } catch (IOException e)
+        {
+            System.out.println("Vending Machine File Could Not Be Found Shutting Down...");
+            System.exit(0);
+        }
     }
-
 
     public void getCustomerMoney()
     {
@@ -93,7 +54,7 @@ public class VendingMachine
 
     public void itemSelectionProccess()
     {
-        System.out.println("Which item do you want");
+        System.out.print("Which item do you want >>> ");
         String userInput = scanner.nextLine();
         userInput = userInput.toUpperCase(Locale.ROOT);
         if(inventor.containsKey(userInput))
@@ -195,14 +156,15 @@ public class VendingMachine
             String itemType = item.getValue().getItemType() + (" ").repeat(longestItemTypeLength - item.getValue().getItemType().length());
             if(item.getValue().getLocationId().charAt(0) == previousId)
             {
-                System.out.print("|"+ item.getKey() + " " + itemName + " " + itemType + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("("+ item.getKey() + ") " + itemName + " $" + item.getValue().getPrice()  + "  Stock: " + item.getValue().getInStockAmount() + " " );
             }
             else
             {
-                System.out.print("\n|"+ item.getValue().getLocationId() + " " + itemName  + " " + itemType  + " $" + item.getValue().getPrice()  + "  InStock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("\n("+ item.getValue().getLocationId() + ") " + itemName  + " $" + item.getValue().getPrice()  + "  Stock: " + item.getValue().getInStockAmount() + " " );
             }
             previousId = item.getValue().getLocationId().charAt(0);
         }
+        System.out.println(" ");
 
     }
 }
