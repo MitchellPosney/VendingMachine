@@ -32,28 +32,28 @@ process menu:~~
     >
     > Current Money Provided: $2.00
     >```
-7. The purchase process flow is as follows:
-    1. Selecting "(1) Feed Money" allows the customer to repeatedly feed money into the
-    machine in valid, whole dollar amounts—for example, $1, $2, $5, or $10.
-        - The "Current Money Provided" indicates how much money the customer
-        has fed into the machine.
-    2. Selecting "(2) Select Product" allows the customer to select a product to
-    purchase.
-        - Show the list of products available and allow the customer to enter
-        a code to select an item.
-        - If the product code does not exist, the customer is informed and returned
-        to the Purchase menu.
-        - If a product is sold out, the customer is informed and returned to the
-        Purchase menu.
-        - If a valid product is selected, it is dispensed to the customer.
-        - Dispensing an item prints the item name, cost, and the money
-        remaining. Dispensing also returns a message:
-          - All chip items print "Crunch Crunch, Yum!"
-          - All candy items print "Munch Munch, Yum!"
-          - All drink items print "Glug Glug, Yum!"
-          - All gum items print "Chew Chew, Yum!"
-        - After the product is dispensed, the machine must update its balance
-        accordingly and return the customer to the Purchase menu.
+7. ~~The purchase process flow is as follows:~~
+    1. ~~Selecting "(1) Feed Money" allows the customer to repeatedly feed money into the
+    machine in valid, whole dollar amounts—for example, $1, $2, $5, or $10.~~
+        - ~~The "Current Money Provided" indicates how much money the customer
+        has fed into the machine.~~
+    2. ~~Selecting "(2) Select Product" allows the customer to select a product to
+    purchase.~~
+        - ~~Show the list of products available and allow the customer to enter
+        a code to select an item.~~
+        - ~~If the product code does not exist, the customer is informed and returned
+        to the Purchase menu.~~
+        - ~~If a product is sold out, the customer is informed and returned to the
+        Purchase menu.~~
+        - ~~If a valid product is selected, it is dispensed to the customer.~~
+        - ~~Dispensing an item prints the item name, cost, and the money
+        remaining. Dispensing also returns a message:~~
+          - ~~All chip items print "Crunch Crunch, Yum!"~~
+          - ~~All candy items print "Munch Munch, Yum!"~~
+          - ~~All drink items print "Glug Glug, Yum!"~~
+          - ~~All gum items print "Chew Chew, Yum!"~~
+        - ~~After the product is dispensed, the machine must update its balance
+        accordingly and return the customer to the Purchase menu.~~
     3. Selecting "(3) Finish Transaction" allows the customer to complete the
     transaction and receive any remaining change.
         - The customer's money is returned using nickels, dimes, and quarters

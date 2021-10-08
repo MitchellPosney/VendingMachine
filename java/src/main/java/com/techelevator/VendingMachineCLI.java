@@ -11,6 +11,9 @@ public class VendingMachineCLI
 	private static final String MAIN_MENU_OPTION_PURCHASE = "Purchase";
 	private static final String MAIN_MENU_OPTION_EXIT = "Exit";
 	private static final String[] MAIN_MENU_OPTIONS = { MAIN_MENU_OPTION_DISPLAY_ITEMS, MAIN_MENU_OPTION_PURCHASE, MAIN_MENU_OPTION_EXIT};
+	public static final String ANSI_RESET = "\u001B[0m";
+	public static final String ANSI_GREEN = "\u001B[32m";
+	public static final String ANSI_BLUE = "\u001B[34m";
 
 	private Scanner scanner = new Scanner(System.in);
 	private Menu menu;
@@ -44,7 +47,7 @@ public class VendingMachineCLI
 				boolean isTransactionFinished = false;
 				do
 				{
-					System.out.println("\n(1) Feed Money\n(2) Select Product\n(3) Display Items\n(4) Finish Transaction\n\nRemaining Balance: $" + vendingMachine.userBalance);
+					System.out.println("\n(1) Feed Money\n(2) Select Product\n(3) Display Items\n(4) Finish Transaction\n\n" + ANSI_GREEN + "Remaining Balance: $" + vendingMachine.userBalance + ANSI_RESET);
 					System.out.print("Please enter an option >>> ");
 					choice = scanner.nextLine();
 
@@ -63,6 +66,7 @@ public class VendingMachineCLI
 
 
 						case "4":
+							vendingMachine.cashOut();
 							isTransactionFinished = true;
 							System.out.println("Thank for using the Home Alone Snack Machine");
 							break;

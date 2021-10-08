@@ -15,6 +15,10 @@ public class VendingMachine
     public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
     private Scanner scanner = new Scanner(System.in);
     public BigDecimal userBalance = new BigDecimal(0.00);
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_GREEN = "\u001B[32m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RED = "\u001B[31m";
 
     public VendingMachine()
     {
@@ -27,7 +31,7 @@ public class VendingMachine
             while (line != null)
             {
                 String[] invSegments = line.split("\\|");
-                inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2]),invSegments[3]));
+                inventor.put(invSegments[0] ,new VendingItem(invSegments[1],new BigDecimal(invSegments[2]),invSegments[3]));
                 line = reader.readLine();
             }
         } catch (IOException e)
@@ -49,7 +53,7 @@ public class VendingMachine
                 break;
             }
         }
-        System.out.println("$" + userBalance + ", Great! Let's get some snacks!");
+        System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
     }
 
     public void itemSelectionProccess()
@@ -67,9 +71,9 @@ public class VendingMachine
                     BigDecimal itemPrice = inventor.get(userInput).getPrice();
                     userBalance = userBalance.subtract(itemPrice);
                     inventor.get(userInput).itemIsPurchased();
-                    System.out.println("You choose " + inventor.get(userInput).getItemName());
+                    System.out.println("You choose " + inventor.get(userInput).getItemName() + " at" + ANSI_RED + " $" + inventor.get(userInput).getPrice() + ANSI_RESET);
                     System.out.println(getSound(inventor.get(userInput).getItemType()));
-                    System.out.println("Your New Balance is $" + userBalance);
+                    System.out.println(ANSI_GREEN + "Your New Balance is $" + userBalance + ANSI_RESET);
                     logSale(startingBal);
                 }
                 else
@@ -107,6 +111,62 @@ public class VendingMachine
 
     }
 
+    public void cashOut() {
+        BigDecimal cashOutBalance = userBalance;
+        BigDecimal quarter = new BigDecimal(.25);
+        quarter = quarter.setScale(2, RoundingMode.FLOOR);
+        BigDecimal dime = new BigDecimal(.10);
+        dime = dime.setScale(2, RoundingMode.FLOOR);
+        BigDecimal nickel = new BigDecimal(.05);
+        nickel = nickel.setScale(2, RoundingMode.FLOOR);
+        BigDecimal zeroBalance = new BigDecimal(0);
+        BigDecimal quartersToGive = new BigDecimal(0);
+        BigDecimal dimesToGive = new BigDecimal(0);
+        BigDecimal nickelsToGive = new BigDecimal(0);
+        if(userBalance.compareTo(zeroBalance) == 1)
+        {
+            if(userBalance.compareTo(quarter) == 1)
+            {
+                quartersToGive = getQuarters(quartersToGive, quarter);
+                dimesToGive = getDimes(dimesToGive, dime);
+                nickelsToGive = getNickles(nickelsToGive, nickel);
+            }
+            else if (userBalance.compareTo(dime) == 1)
+            {
+                dimesToGive = getDimes(dimesToGive, dime);
+                nickelsToGive = getNickles(nickelsToGive, nickel);
+            }
+            else if (userBalance.compareTo(nickel) == 1)
+            {
+                nickelsToGive = getNickles(nickelsToGive, nickel);
+            }
+        }
+        System.out.println("Keep the change ya filthy animal! Your Change is: " + ANSI_GREEN + "$" + cashOutBalance + ANSI_RESET);
+        System.out.println("In " + quartersToGive + " Quarters | " + dimesToGive + " Dimes | and " + nickelsToGive + " Nickels.");
+        userBalance = new BigDecimal(0.00);
+    }
+
+    private BigDecimal getQuarters(BigDecimal quartersToGive, BigDecimal quarter) {
+        quartersToGive = userBalance.divide(quarter);
+        quartersToGive = quartersToGive.setScale(0, RoundingMode.DOWN);
+        userBalance = userBalance.subtract(quartersToGive.multiply(quarter));
+        return quartersToGive;
+    }
+
+    private BigDecimal getDimes(BigDecimal dimesToGive, BigDecimal dime) {
+        dimesToGive = userBalance.divide(dime);
+        dimesToGive = dimesToGive.setScale(0, RoundingMode.DOWN);
+        userBalance = userBalance.subtract(dimesToGive.multiply(dime));
+        return dimesToGive;
+    }
+
+    private BigDecimal getNickles(BigDecimal nickelsToGive, BigDecimal nickel) {
+        nickelsToGive = userBalance.divide(nickel);
+        nickelsToGive = nickelsToGive.setScale(0, RoundingMode.DOWN);
+        userBalance = userBalance.subtract(nickelsToGive.multiply(nickel));
+        return nickelsToGive;
+    }
+
     public void logSale(BigDecimal startBalance)
     {
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
@@ -135,7 +195,7 @@ public class VendingMachine
 
     public void printVendingContents()
     {
-        char previousId = inventor.get("A1").getLocationId().charAt(0);
+        char previousId = 'A';
         int longestItemLength = 0;
         int longestItemTypeLength = 0;
         for(Map.Entry<String, VendingItem> item : inventor.entrySet())
@@ -154,15 +214,15 @@ public class VendingMachine
         {
             String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
             String itemType = item.getValue().getItemType() + (" ").repeat(longestItemTypeLength - item.getValue().getItemType().length());
-            if(item.getValue().getLocationId().charAt(0) == previousId)
+            if(item.getKey().charAt(0) == previousId)
             {
-                System.out.print("("+ item.getKey() + ") " + itemName + " $" + item.getValue().getPrice()  + "  Stock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " + item.getValue().getInStockAmount() + ANSI_RESET + " " );
             }
             else
             {
-                System.out.print("\n("+ item.getValue().getLocationId() + ") " + itemName  + " $" + item.getValue().getPrice()  + "  Stock: " + item.getValue().getInStockAmount() + " " );
+                System.out.print("\n("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " + item.getValue().getInStockAmount() + ANSI_RESET + " " );
             }
-            previousId = item.getValue().getLocationId().charAt(0);
+            previousId = item.getKey().charAt(0);
         }
         System.out.println(" ");
 
