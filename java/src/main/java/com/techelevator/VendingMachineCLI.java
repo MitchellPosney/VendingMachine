@@ -40,7 +40,6 @@ public class VendingMachineCLI
 			else if (choice.equals(MAIN_MENU_OPTION_PURCHASE))
 			{
 				vendingMachine.purchaseMenu();
-				//vendingMachine
 				// do purchase
 			}
 			else if(choice.equals(MAIN_MENU_OPTION_EXIT))

@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PurchaseMenuTests {
+public class MoneyInputTests {
 
     VendingMachine vendingMachine;
 
@@ -42,7 +42,6 @@ public class PurchaseMenuTests {
         boolean isItCorrect = vendingMachine.isNumeric(".50");
         Assert.assertEquals(false, isItCorrect);
     }
-
 
 
 }

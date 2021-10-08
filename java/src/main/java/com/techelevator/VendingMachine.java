@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -13,7 +14,7 @@ public class VendingMachine
 {
     public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
     private Scanner scanner = new Scanner(System.in);
-    public BigDecimal userBalance;
+    public BigDecimal userBalance = new BigDecimal(0.00);
 
     public VendingMachine()
     {
@@ -42,21 +43,30 @@ public class VendingMachine
         boolean isTransactionFinished = false;
         do
         {
-            System.out.println("(1)Feed Money\n(2) Select Product\n(3) Finish Transaction");
+            System.out.println("\n(1) Feed Money\n(2) Select Product\n(3) Display Items\n(4) Finish Transaction\n\nRemaining Balance: $" + userBalance);
+            System.out.print("Please enter an option >>> ");
             String choice = scanner.nextLine();
+
             switch (choice)
             {
                 case "1":
                     getCustomerMoney();
+                    break;
                 case "2":
                     itemSelectionProccess();
+                    break;
                 case "3":
+                    printVendingContents();
+                    break;
+
+
+                case "4":
                     isTransactionFinished = true;
 
-
-
-
                     System.out.println("Thank for using the Home Alone Snack Machine");
+                    break;
+
+
                 default:
                 {
                     System.out.println("Invalid Entry");
@@ -78,18 +88,19 @@ public class VendingMachine
                 break;
             }
         }
-        System.out.println("$" + userBalance + ", Great!\nLet's get some snacks!");
+        System.out.println("$" + userBalance + ", Great! Let's get some snacks!");
     }
 
     public void itemSelectionProccess()
     {
         System.out.println("Which item do you want");
         String userInput = scanner.nextLine();
+        userInput = userInput.toUpperCase(Locale.ROOT);
         if(inventor.containsKey(userInput))
         {
-            if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue()  > 0.00)
+            if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue() > 0.00)
             {
-                if(inventor.get(userInput).getInStockAmount() >= 0)
+                if(inventor.get(userInput).getInStockAmount() != 0)
                 {
                     BigDecimal startingBal = inventor.get(userInput).getPrice();
                     BigDecimal itemPrice = inventor.get(userInput).getPrice();
@@ -131,6 +142,8 @@ public class VendingMachine
             default:
                 return "THIS SNACK IS KINDA SUS";
         }
+
+
     }
 
     public void logSale(BigDecimal startBalance)
