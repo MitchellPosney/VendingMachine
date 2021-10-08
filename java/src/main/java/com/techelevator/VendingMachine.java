@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 public class VendingMachine
 {
-    public LinkedHashMap<String,VendingItem> inventory = new LinkedHashMap<String, VendingItem>();
-
-    public Double userBalance = 5.30;
+    public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
+    private Scanner scanner = new Scanner(System.in);
+    public BigDecimal userBalance;
 
 
     public VendingMachine()
@@ -25,7 +26,7 @@ public class VendingMachine
             while (line != null)
             {
                 String[] invSegments = line.split("\\|");
-                inventory.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
+                inventor.put(invSegments[0] ,new VendingItem(invSegments[0],invSegments[1],new BigDecimal(invSegments[2])));
                 line = reader.readLine();
             }
         } catch (IOException e)
@@ -33,16 +34,46 @@ public class VendingMachine
         }
     }
 
-    public void purchase()
+    public BigDecimal getCustomerMoney()
     {
+        boolean validResponse = false;
+        BigDecimal customerMoney =  new BigDecimal(0);
 
-        String input = "A1";
-        if(inventory.containsKey(input))
+        while (validResponse == false) {
+            System.out.print("Please enter your money: ");
+            String moneyInputString = scanner.nextLine();
+            if (isNumeric(moneyInputString)) {
+                customerMoney = new BigDecimal(moneyInputString);
+                return customerMoney;
+            }
+        }
+        System.out.println("$" + customerMoney + ", Great!\nLet's get some snacks!");
+        return customerMoney;
+    }
+
+    public boolean isNumeric(String moneyInput) {
+        try
         {
-            if(userBalance - inventory.get(input).getPrice().doubleValue() >= 0)
+            if(moneyInput == null || moneyInput.equals("") || moneyInput.equals("0")) {
+                return false;
+            }
+        } catch (NumberFormatException e) {}
+        return true;
+    }
+
+
+    public void purchaseProcess()
+    {
+        System.out.println("Which item do you want");
+        String userInput = scanner.nextLine();
+        if(inventor.containsKey(userInput))
+        {
+            if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue()  > 0.00)
             {
-                userBalance = userBalance - inventory.get(input).getPrice().doubleValue();
-                System.out.println("You choose " + inventory.get(input).getItemName());
+                double temp = userBalance.doubleValue();
+                double temp2 = inventor.get(userInput).getPrice().doubleValue();
+                userBalance = new BigDecimal(temp - temp2);
+                System.out.println("You choose " + inventor.get(userInput).getItemName());
                 System.out.println("Your change is " + userBalance);
             }
             else
@@ -62,9 +93,9 @@ public class VendingMachine
     public void printVendingContents()
     {
 
-        char previousId = inventory.get("A1").getLocationId().charAt(0);
+        char previousId = inventor.get("A1").getLocationId().charAt(0);
         int longestItemLength = 0;
-        for(Map.Entry<String, VendingItem> item : inventory.entrySet())
+        for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
             if(item.getValue().getItemName().length() > longestItemLength)
             {
@@ -72,7 +103,7 @@ public class VendingMachine
             }
         }
 
-        for(Map.Entry<String, VendingItem> item : inventory.entrySet())
+        for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
             String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
             if(item.getValue().getLocationId().charAt(0) == previousId)

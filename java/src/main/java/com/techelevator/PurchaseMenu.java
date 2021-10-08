@@ -1,26 +1,16 @@
 package com.techelevator;
 
 import java.math.BigDecimal;
-import java.util.Scanner;
+
 
 public class PurchaseMenu {
 
-    private Scanner scanner = new Scanner(System.in);
+
 
 
 
     public void purchaseProcess() {
-        boolean validResponse = false;
-        BigDecimal customerMoney =  new BigDecimal(0);
-        while (!validResponse) {
-            System.out.print("Please enter your money: ");
-            String moneyInputString = scanner.nextLine();
-            if (isNumeric(moneyInputString)) {
-                customerMoney = new BigDecimal(moneyInputString);
-                break;
-            }
-        }
-        System.out.println("$" + customerMoney + ", Great!\nLet's get some snacks!");
+
 
 
     }

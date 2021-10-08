@@ -19,17 +19,20 @@ public class VendingMachineCLI
 
 	public void run()
 	{
+		VendingMachine customer = new VendingMachine();
 		while (true)
 		{
 			String choice = (String) menu.getChoiceFromOptions(MAIN_MENU_OPTIONS);
 
 			if (choice.equals(MAIN_MENU_OPTION_DISPLAY_ITEMS))
 			{
-				//new VendingMachine().printVendingContents();
+				customer.printVendingContents();
 				// display vending machine items
 			}
 			else if (choice.equals(MAIN_MENU_OPTION_PURCHASE))
 			{
+				customer.getCustomerMoney();
+				customer.purchaseProcess();
 				// do purchase
 			}
 			else if(choice.equals(MAIN_MENU_OPTION_EXIT))
