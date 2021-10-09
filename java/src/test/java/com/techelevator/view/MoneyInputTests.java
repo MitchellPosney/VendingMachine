@@ -1,5 +1,6 @@
-package com.techelevator;
+package com.techelevator.view;
 
+import com.techelevator.VendingMachine;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,27 +15,27 @@ public class MoneyInputTests {
     }
 
     @Test
-    public void enteredRock() {
-        boolean isItCorrect = vendingMachine.isNumeric("Rock");
-        Assert.assertEquals(false, isItCorrect);
+    public void enteredMayo() {
+        boolean isItCorrect = vendingMachine.isNumeric("Mayonnaise");
+        Assert.assertEquals("No Patrick, Mayonaise is not an instrument.",false, isItCorrect);
     }
 
     @Test
     public void entered3454() {
         boolean isItCorrect = vendingMachine.isNumeric("34.54");
-        Assert.assertEquals(false, isItCorrect);
+        Assert.assertEquals("Whole dollar values only.",false, isItCorrect);
     }
 
     @Test
     public void entered0() {
         boolean isItCorrect = vendingMachine.isNumeric("0");
-        Assert.assertEquals(false, isItCorrect);
+        Assert.assertEquals("Inputting no money is not valid",false, isItCorrect);
     }
 
     @Test
     public void entered564337() {
         boolean isItCorrect = vendingMachine.isNumeric("564337");
-        Assert.assertEquals(true, isItCorrect);
+        Assert.assertEquals("Six figure amounts should be vaild",true, isItCorrect);
     }
 
     @Test

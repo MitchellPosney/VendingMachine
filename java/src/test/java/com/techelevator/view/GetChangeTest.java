@@ -8,7 +8,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class GetQuartersTests {
+public class GetChangeTest {
 
     VendingMachine vendingMachine;
     BigDecimal quarter = new BigDecimal(.25);
@@ -17,18 +17,11 @@ public class GetQuartersTests {
 
 
     @Before
-    public void quarterTests() {
+    public void changeTests() {
         vendingMachine = new VendingMachine();
         quarter = quarter.setScale(2, RoundingMode.FLOOR);
         dime = dime.setScale(2, RoundingMode.FLOOR);
         nickel = nickel.setScale(2, RoundingMode.FLOOR);
-        /*
-        BigDecimal zeroBalance = new BigDecimal(0);
-        BigDecimal quartersToGive = new BigDecimal(0);
-        BigDecimal dimesToGive = new BigDecimal(0);
-        BigDecimal nickelsToGive = new BigDecimal(0);
-
-         */
     }
 
     @Test

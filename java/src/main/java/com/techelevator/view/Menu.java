@@ -53,10 +53,15 @@ public class Menu
 	private void displayMenuOptions(Object[] options)
 	{
 		out.println();
-		for (int i = 0; i < options.length; i++)
+		int optionNum = 1;
+		for(Object option :options)
 		{
-			int optionNum = i + 1;
-			out.println(optionNum + ") " + options[i]);
+			if (option == "Sales Report")
+			{
+				continue;
+			}
+			out.println(optionNum + ") " + option);
+			optionNum++;
 		}
 		out.print(System.lineSeparator() + "Please choose an option >>> ");
 		out.flush();
