@@ -50,35 +50,42 @@ public class VendingMachineCLI
 				{
 					System.out.println("\n(1) Feed Money\n(2) Select Product\n(3) Display Items\n(4) Finish Transaction\n\n" + ANSI_GREEN + "Remaining Balance: $" + vendingMachine.userBalance + ANSI_RESET);
 					System.out.print("Please enter an option >>> ");
-					choice = scanner.nextLine();
-					switch (choice)
+					String transactionChoice = scanner.nextLine();
+					switch (transactionChoice)
 					{
 						case "1":
-							vendingMachine.getCustomerMoney();
+							do
+							{
+								System.out.print("Which item do you want >>> ");
+							}while(vendingMachine.getCustomerMoney(scanner.nextLine()) == false);
 							break;
 						case "2":
 							vendingMachine.printVendingContents();
-							vendingMachine.itemSelectionProcess();
+							do
+							{
+								System.out.print("Which item do you want >>> ");
+							}while(vendingMachine.itemSelectionProcess(scanner.nextLine()) == false);
 							break;
 						case "3":
 							vendingMachine.printVendingContents();
 							break;
 						case "4":
 							vendingMachine.cashOut();
-							isTransactionFinished = true;
 							System.out.println("Thank for using the Home Alone Snack Machine");
+							isTransactionFinished = true;
 							break;
-
 						default:
 						{
 							System.out.println("Invalid Entry");
 						}
 					}
-				}while(!isTransactionFinished);
+				}while(isTransactionFinished == false);
 			}
 			else if(choice.equals(MAIN_MENU_OPTION_EXIT))
 			{
 				// do exit
+				System.out.println("Shutting Down...");
+				System.exit(0);
 			}
 			else if(choice.equals(MAIN_MENU_OPTION_SALES_REPORT))
 			{

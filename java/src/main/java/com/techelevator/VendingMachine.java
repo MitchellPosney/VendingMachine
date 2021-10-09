@@ -1,6 +1,10 @@
 package com.techelevator;
 
-import java.io.*;
+import java.io.FileWriter;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
@@ -8,12 +12,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Scanner;
 
 public class VendingMachine
 {
     public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
-    private Scanner scanner = new Scanner(System.in);
     public BigDecimal userBalance = new BigDecimal(0.00);
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -41,25 +43,20 @@ public class VendingMachine
         }
     }
 
-    public void getCustomerMoney()
+    public boolean getCustomerMoney(String moneyInputString)
     {
-        boolean validResponse = false;
-        while (!validResponse) {
-            System.out.print("Please enter your money: ");
-            String moneyInputString = scanner.nextLine();
-            if (isNumeric(moneyInputString)) {
-                userBalance = userBalance.add(new BigDecimal(moneyInputString));
-                userBalance.setScale(2, RoundingMode.HALF_UP);
-                break;
-            }
+        if (isNumeric(moneyInputString))
+        {
+            userBalance = userBalance.add(new BigDecimal(moneyInputString));
+            userBalance.setScale(2, RoundingMode.HALF_UP);
+            System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
+            return true;
         }
-        System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
+        return false;
     }
 
-    public void itemSelectionProcess()
+    public boolean itemSelectionProcess(String userInput)
     {
-        System.out.print("Which item do you want >>> ");
-        String userInput = scanner.nextLine();
         userInput = userInput.toUpperCase(Locale.ROOT);
         if(inventor.containsKey(userInput))
         {
@@ -75,6 +72,7 @@ public class VendingMachine
                     System.out.println(getSound(inventor.get(userInput).getItemType()));
                     System.out.println(ANSI_GREEN + "Your New Balance is $" + userBalance + ANSI_RESET);
                     logSale(startingBal,inventor.get(userInput).getItemName());
+                    return true;
                 }
                 else
                 {
@@ -90,6 +88,7 @@ public class VendingMachine
         {
             System.out.println("Not A Valid Location");
         }
+        return false;
     }
 
     public String getSound(String itemType)
@@ -127,13 +126,9 @@ public class VendingMachine
             FileWriter newPrint = new FileWriter("Log.txt", true);
             newPrint.write("\n" + timeFormat.format(presentTime) + " " + startBalance  + " " + userBalance);
             newPrint.close();
-
             BufferedReader reader = new BufferedReader(new FileReader("SalesFile.txt"));
-
             FileWriter saleReport = new FileWriter("SalesFile.txt",true);
-
             String line = reader.readLine();
-
             boolean foundProduct = false;
             while(foundProduct == false)
             {
@@ -155,12 +150,12 @@ public class VendingMachine
                     line = reader.readLine();
                 }
             }
-
         } catch (IOException e) {}
     }
 
     public boolean isNumeric(String moneyInput) {
-        try {
+        try
+        {
             if(Integer.parseInt(moneyInput) > 0)
             {
                 return true;
@@ -197,6 +192,5 @@ public class VendingMachine
             previousId = item.getKey().charAt(0);
         }
         System.out.println(" ");
-
     }
 }
