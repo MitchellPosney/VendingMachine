@@ -56,14 +56,14 @@ public class VendingMachineCLI
 						case "1":
 							do
 							{
-								System.out.print("Which item do you want >>> ");
+								System.out.print("Please choose an option >>> ");
 							}while(vendingMachine.getCustomerMoney(scanner.nextLine()) == false);
 							break;
 						case "2":
-							vendingMachine.printVendingContents();
 							do
 							{
-								System.out.print("Which item do you want >>> ");
+								vendingMachine.printVendingContents();
+								System.out.print("Please choose an Item >>> ");
 							}while(vendingMachine.itemSelectionProcess(scanner.nextLine()) == false);
 							break;
 						case "3":
