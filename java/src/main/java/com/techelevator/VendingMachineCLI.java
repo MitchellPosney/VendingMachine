@@ -56,7 +56,7 @@ public class VendingMachineCLI
 						case "1":
 							do
 							{
-								System.out.print("Please choose an option >>> ");
+								System.out.print("How much money will you be adding? >>> ");
 							}while(vendingMachine.getCustomerMoney(scanner.nextLine()) == false);
 							break;
 						case "2":

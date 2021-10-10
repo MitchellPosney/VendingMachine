@@ -47,9 +47,12 @@ public class VendingMachine
     {
         if (isNumeric(moneyInputString))
         {
+            BigDecimal startingBal = userBalance;
             userBalance = userBalance.add(new BigDecimal(moneyInputString));
+            logSale(startingBal,"FEED MONEY");
             userBalance.setScale(2, RoundingMode.HALF_UP);
             System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
+
             return true;
         }
         return false;
@@ -82,6 +85,7 @@ public class VendingMachine
             else
             {
                 System.out.println("Not Enough Money");
+                return true;
             }
         }
         else
@@ -110,46 +114,24 @@ public class VendingMachine
 
     public void cashOut()
     {
+        BigDecimal cashOutBalance = userBalance;
         System.out.println("Keep the change ya filthy animal! Your Change is: " + ANSI_GREEN + "$" + userBalance + ANSI_RESET);
         int cents = (int) Math.round(userBalance.doubleValue()*100);
         int[] changeDue = {cents/25,(cents%=25)/10, (cents%=10)/5, cents%5};
         System.out.println("In " + changeDue[0] + " Quarters | " + changeDue[1] + " Dimes | " + changeDue[2] + " Nickels." + " | " + changeDue[3] + " Pennies");
         userBalance = new BigDecimal(0.00);
+        logSale(cashOutBalance,"GIVE CHANGE");
     }
 
     public void logSale(BigDecimal startBalance, String itemName)
     {
-        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
         LocalDateTime presentTime = LocalDateTime.now();
+        startBalance =  startBalance.setScale(2, RoundingMode.DOWN);
         try {
-
             FileWriter newPrint = new FileWriter("Log.txt", true);
-            newPrint.write("\n" + timeFormat.format(presentTime) + " " + startBalance  + " " + userBalance);
+            newPrint.write("\n>" + timeFormat.format(presentTime) + " (" + itemName + ") $" + startBalance  + " $" + userBalance);
             newPrint.close();
-            BufferedReader reader = new BufferedReader(new FileReader("SalesFile.txt"));
-            FileWriter saleReport = new FileWriter("SalesFile.txt",true);
-            String line = reader.readLine();
-            boolean foundProduct = false;
-            while(foundProduct == false)
-            {
-                if(line == null)
-                {
-                    saleReport.write(itemName+ "|" + "1");
-                    saleReport.close();
-                    foundProduct = true;
-                    continue;
-                }
-                String[] lineSegments = line.split("\\|");
-                if(line != null)
-                {
-                    saleReport.write(itemName+ "|" + (lineSegments[1]+1));
-                    foundProduct = true;
-                }
-                else
-                {
-                    line = reader.readLine();
-                }
-            }
         } catch (IOException e) {}
     }
 
@@ -183,11 +165,10 @@ public class VendingMachine
             String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
             if(item.getKey().charAt(0) == previousId)
             {
-                System.out.print("("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " + item.getValue().getInStockAmount() + ANSI_RESET + "     " );
-            }
+                System.out.print("("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " +   ((item.getValue().getInStockAmount() == 0)? ANSI_RESET + ANSI_RED + "SOLD OUT " + ANSI_RESET :    item.getValue().getInStockAmount() + ANSI_RESET + "        "));            }
             else
             {
-                System.out.print("\n("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " + item.getValue().getInStockAmount() + ANSI_RESET + "     " );
+                System.out.print("\n("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " + ((item.getValue().getInStockAmount() == 0)? ANSI_RESET + ANSI_RED + "SOLD OUT " + ANSI_RESET :    item.getValue().getInStockAmount() + ANSI_RESET + "        "));
             }
             previousId = item.getKey().charAt(0);
         }
