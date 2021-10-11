@@ -38,7 +38,8 @@ public class VendingMachine
                 inventor.put(invSegments[0] ,new VendingItem(invSegments[1],new BigDecimal(invSegments[2]),invSegments[3]));
                 line = reader.readLine();
             }
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             System.out.println("Vending Machine File Could Not Be Found Shutting Down...");
             System.exit(0);
@@ -55,7 +56,8 @@ public class VendingMachine
                 itemSounds.put(invSegments[0], invSegments[1]);
                 line = reader.readLine();
             }
-        } catch (IOException e)
+        }
+        catch (IOException e)
         {
             System.out.println("Item Sound File Could Not Be Found Shutting Down...");
             System.exit(0);
@@ -68,7 +70,7 @@ public class VendingMachine
         {
             BigDecimal startingBal = userBalance;
             userBalance = userBalance.add(new BigDecimal(moneyInputString));
-            logSale(startingBal,"FEED MONEY");
+            logData(startingBal,"FEED MONEY");
             userBalance.setScale(2, RoundingMode.HALF_UP);
             System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
             return true;
@@ -92,7 +94,7 @@ public class VendingMachine
                     System.out.println("You choose " + inventor.get(userInput).getItemName() + " at" + ANSI_RED + " $" + inventor.get(userInput).getPrice() + ANSI_RESET);
                     System.out.println(getSound(inventor.get(userInput).getItemType()));
                     System.out.println(ANSI_GREEN + "Your New Balance is $" + userBalance + ANSI_RESET);
-                    logSale(startingBal,inventor.get(userInput).getItemName());
+                    logData(startingBal,inventor.get(userInput).getItemName());
                     return true;
                 }
                 else
@@ -148,36 +150,41 @@ public class VendingMachine
         }
         System.out.println("In " + changeDue[0] + " Quarters | " + changeDue[1] + " Dimes | " + changeDue[2] + " Nickels | " + changeDue[3] + " Pennies");
         userBalance = new BigDecimal(0.00);
-        logSale(cashOutBalance,"GIVE CHANGE");
+        logData(cashOutBalance,"GIVE CHANGE");
     }
 
-    public void logSale(BigDecimal startBalance, String itemName)
+    public void logData(BigDecimal startBalance, String itemName)
     {
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
         LocalDateTime presentTime = LocalDateTime.now();
         startBalance =  startBalance.setScale(2, RoundingMode.DOWN);
-        try {
+        try
+        {
             FileWriter newPrint = new FileWriter("Log.txt", true);
             newPrint.write("\n>" + timeFormat.format(presentTime) + " (" + itemName + ") $" + startBalance  + " $" + userBalance);
             newPrint.close();
         } catch (IOException e) {}
     }
 
-    public boolean isNumeric(String moneyInput) {
+    public boolean isNumeric(String moneyInput)
+    {
         try
         {
             if(new BigInteger(moneyInput).compareTo(BigInteger.valueOf(0)) == 1)
             {
-                try{
+                try
+                {
                     BigDecimal maxBigDecimalSize = new BigDecimal(moneyInput).add(userBalance);
-                }catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     System.out.println("You have reached the limit spend some money first");
                     return true;
                 }
                 return true;
             }
-        } catch (NumberFormatException e)
+        }
+        catch (NumberFormatException e)
         {
             System.out.println(moneyInput + " is not a proper value.");
         }
