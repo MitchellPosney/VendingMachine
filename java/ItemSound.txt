@@ -1,0 +1,4 @@
+Chip|Crunch Crunch, Yum!
+Candy|Munch Munch, Yum!
+Drink|Glug Glug, Yum!
+Gum|Chew Chew, Yum!

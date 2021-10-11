@@ -29,42 +29,42 @@ public class GetChangeTest {
     public void changeOf5() {
         vendingMachine.userBalance = new BigDecimal(5);
         vendingMachine.cashOut();
-        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("20 Quarters"));
+        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("20 Quarters | 0 Dimes | 0 Nickels | 0 Pennies"));
     }
 
     @Test
-    public void changeOf580() {
+    public void changeOf590() {
         vendingMachine.userBalance = new BigDecimal(5.90);
         vendingMachine.cashOut();
-        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("23 Quarters | 1 Dimes | 1 Nickels"));
+        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("23 Quarters | 1 Dimes | 1 Nickels | 0 Pennies"));
     }
 
     @Test
     public void changeOf025() {
         vendingMachine.userBalance = new BigDecimal(.25);
         vendingMachine.cashOut();
-        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("1 Quarters"));
+        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("1 Quarters | 0 Dimes | 0 Nickels | 0 Pennies"));
     }
 
     @Test
     public void changeOf010() {
         vendingMachine.userBalance = new BigDecimal(.10);
         vendingMachine.cashOut();
-        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("1 Dimes"));
+        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("0 Quarters | 1 Dimes | 0 Nickels | 0 Pennies"));
     }
 
     @Test
     public void changeOf005() {
         vendingMachine.userBalance = new BigDecimal(.05);
         vendingMachine.cashOut();
-        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("1 Nickels"));
+        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("0 Quarters | 0 Dimes | 1 Nickels | 0 Pennies"));
     }
 
     @Test
     public void changeOf076() {
         vendingMachine.userBalance = new BigDecimal(.76);
         vendingMachine.cashOut();
-        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("1 Pennies"));
+        Assert.assertTrue(outputStreamCaptor.toString().trim().contains("3 Quarters | 0 Dimes | 0 Nickels | 1 Pennies"));
     }
 
     @After

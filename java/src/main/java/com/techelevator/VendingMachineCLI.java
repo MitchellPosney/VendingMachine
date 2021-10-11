@@ -87,11 +87,6 @@ public class VendingMachineCLI
 				System.out.println("Shutting Down...");
 				System.exit(0);
 			}
-			else if(choice.equals(MAIN_MENU_OPTION_SALES_REPORT))
-			{
-				//do Sales Report
-
-			}
 		}
 	}
 }

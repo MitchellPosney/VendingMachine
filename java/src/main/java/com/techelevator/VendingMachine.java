@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +17,7 @@ import java.util.Map;
 public class VendingMachine
 {
     public LinkedHashMap<String,VendingItem> inventor = new LinkedHashMap<String, VendingItem>();
+    public LinkedHashMap<String,String> itemSounds = new LinkedHashMap<String, String>();
     public BigDecimal userBalance = new BigDecimal(0.00);
     public static final String ANSI_RESET = "\u001B[0m";
     public static final String ANSI_GREEN = "\u001B[32m";
@@ -41,6 +43,23 @@ public class VendingMachine
             System.out.println("Vending Machine File Could Not Be Found Shutting Down...");
             System.exit(0);
         }
+        //Gets the item sounds
+        try
+        {
+            File inventoryTemp = new File("ItemSound.txt");
+            BufferedReader reader = new BufferedReader(new FileReader(inventoryTemp));
+            String line = reader.readLine();
+            while (line != null)
+            {
+                String[] invSegments = line.split("\\|");
+                itemSounds.put(invSegments[0], invSegments[1]);
+                line = reader.readLine();
+            }
+        } catch (IOException e)
+        {
+            System.out.println("Item Sound File Could Not Be Found Shutting Down...");
+            System.exit(0);
+        }
     }
 
     public boolean getCustomerMoney(String moneyInputString)
@@ -52,7 +71,6 @@ public class VendingMachine
             logSale(startingBal,"FEED MONEY");
             userBalance.setScale(2, RoundingMode.HALF_UP);
             System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
-
             return true;
         }
         return false;
@@ -65,7 +83,7 @@ public class VendingMachine
         {
             if(userBalance.doubleValue() - inventor.get(userInput).getPrice().doubleValue() > 0.00)
             {
-                if(inventor.get(userInput).getInStockAmount() != 0)
+                if(inventor.get(userInput).getInStockAmount() > 0)
                 {
                     BigDecimal startingBal = userBalance;
                     BigDecimal itemPrice = inventor.get(userInput).getPrice();
@@ -97,28 +115,38 @@ public class VendingMachine
 
     public String getSound(String itemType)
     {
-        switch (itemType)
-        {
-            case "Chip":
-                return "Crunch Crunch, Yum!";
-            case "Candy":
-                return "Munch Munch, Yum!";
-            case "Drink":
-                return "Glug Glug, Yum!";
-            case "Gum":
-                return "Chew Chew, Yum!";
-            default:
-                return "THIS SNACK IS KINDA SUS";
-        }
+       if(itemSounds.containsKey(itemType))
+       {
+           return itemSounds.get(itemType);
+       }
+       else
+       {
+           return "THIS SNACK IS KINDA SUS";
+       }
     }
 
-    public void cashOut()
-    {
+    public void cashOut() {
         BigDecimal cashOutBalance = userBalance;
+        BigDecimal changeBalance = userBalance;
         System.out.println("Keep the change ya filthy animal! Your Change is: " + ANSI_GREEN + "$" + userBalance + ANSI_RESET);
-        int cents = (int) Math.round(userBalance.doubleValue()*100);
-        int[] changeDue = {cents/25,(cents%=25)/10, (cents%=10)/5, cents%5};
-        System.out.println("In " + changeDue[0] + " Quarters | " + changeDue[1] + " Dimes | " + changeDue[2] + " Nickels." + " | " + changeDue[3] + " Pennies");
+
+        BigInteger[] changeDue = {new BigInteger("0"), new BigInteger("0"), new BigInteger("0"), new BigInteger("0")};
+        //Quarters
+        changeDue[0] = (changeBalance.divide(new BigDecimal("0.25"))).toBigInteger();
+        changeBalance = changeBalance.subtract(new BigDecimal("0.25").multiply(new BigDecimal(changeDue[0])));
+        //Dimes
+        changeDue[1] = changeBalance.remainder(new BigDecimal("0.25")).divide(BigDecimal.valueOf(0.10)).toBigInteger();
+        changeBalance = changeBalance.subtract(new BigDecimal("0.10").multiply(new BigDecimal(changeDue[1])));
+        //Nickels
+        changeDue[2] = changeBalance.remainder(new BigDecimal("0.10")).divide(BigDecimal.valueOf(0.05)).toBigInteger();
+        changeBalance = changeBalance.subtract(new BigDecimal("0.05").multiply(new BigDecimal(changeDue[2])));
+        //Pennies
+        while (changeBalance.compareTo(BigDecimal.valueOf(0.01)) == 1 || changeBalance.compareTo(BigDecimal.valueOf(0.01)) == 0)
+        {
+            changeBalance = changeBalance.subtract(BigDecimal.valueOf(0.01));
+            changeDue[3] = changeDue[3].add(new BigInteger("1"));
+        }
+        System.out.println("In " + changeDue[0] + " Quarters | " + changeDue[1] + " Dimes | " + changeDue[2] + " Nickels | " + changeDue[3] + " Pennies");
         userBalance = new BigDecimal(0.00);
         logSale(cashOutBalance,"GIVE CHANGE");
     }
@@ -138,8 +166,15 @@ public class VendingMachine
     public boolean isNumeric(String moneyInput) {
         try
         {
-            if(Integer.parseInt(moneyInput) > 0)
+            if(new BigInteger(moneyInput).compareTo(BigInteger.valueOf(0)) == 1)
             {
+                try{
+                    BigDecimal maxBigDecimalSize = new BigDecimal(moneyInput).add(userBalance);
+                }catch (Exception e)
+                {
+                    System.out.println("You have reached the limit spend some money first");
+                    return true;
+                }
                 return true;
             }
         } catch (NumberFormatException e)
@@ -163,13 +198,9 @@ public class VendingMachine
         for(Map.Entry<String, VendingItem> item : inventor.entrySet())
         {
             String itemName = item.getValue().getItemName() + (" ").repeat(longestItemLength - item.getValue().getItemName().length());
-            if(item.getKey().charAt(0) == previousId)
-            {
-                System.out.print("("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " +   ((item.getValue().getInStockAmount() == 0)? ANSI_RESET + ANSI_RED + "SOLD OUT " + ANSI_RESET :    item.getValue().getInStockAmount() + ANSI_RESET + "        "));            }
-            else
-            {
-                System.out.print("\n("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: " + ((item.getValue().getInStockAmount() == 0)? ANSI_RESET + ANSI_RED + "SOLD OUT " + ANSI_RESET :    item.getValue().getInStockAmount() + ANSI_RESET + "        "));
-            }
+            System.out.print(((item.getKey().charAt(0) == previousId)? "" : "\n")
+                    + "("+ item.getKey() + ") " + itemName + ANSI_GREEN + " $" + item.getValue().getPrice() + ANSI_RESET + ANSI_BLUE + "  Stock: "
+                    + ((item.getValue().getInStockAmount() == 0)? ANSI_RESET + ANSI_RED + "SOLD OUT " + ANSI_RESET : item.getValue().getInStockAmount() + ANSI_RESET + "        "));
             previousId = item.getKey().charAt(0);
         }
         System.out.println(" ");
