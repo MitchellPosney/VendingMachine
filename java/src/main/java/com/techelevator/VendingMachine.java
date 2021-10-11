@@ -70,7 +70,7 @@ public class VendingMachine
         {
             BigDecimal startingBal = userBalance;
             userBalance = userBalance.add(new BigDecimal(moneyInputString));
-            logData(startingBal,"FEED MONEY");
+            logTransaction(startingBal,"FEED MONEY");
             userBalance.setScale(2, RoundingMode.HALF_UP);
             System.out.println(ANSI_GREEN + "$" + userBalance + ANSI_RESET + ", Great! Let's get some snacks!");
             return true;
@@ -94,7 +94,7 @@ public class VendingMachine
                     System.out.println("You choose " + inventor.get(userInput).getItemName() + " at" + ANSI_RED + " $" + inventor.get(userInput).getPrice() + ANSI_RESET);
                     System.out.println(getSound(inventor.get(userInput).getItemType()));
                     System.out.println(ANSI_GREEN + "Your New Balance is $" + userBalance + ANSI_RESET);
-                    logData(startingBal,inventor.get(userInput).getItemName());
+                    logTransaction(startingBal,inventor.get(userInput).getItemName());
                     return true;
                 }
                 else
@@ -150,10 +150,10 @@ public class VendingMachine
         }
         System.out.println("In " + changeDue[0] + " Quarters | " + changeDue[1] + " Dimes | " + changeDue[2] + " Nickels | " + changeDue[3] + " Pennies");
         userBalance = new BigDecimal(0.00);
-        logData(cashOutBalance,"GIVE CHANGE");
+        logTransaction(cashOutBalance,"GIVE CHANGE");
     }
 
-    public void logData(BigDecimal startBalance, String itemName)
+    public void logTransaction(BigDecimal startBalance, String itemName)
     {
         DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
         LocalDateTime presentTime = LocalDateTime.now();
